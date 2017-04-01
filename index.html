@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Github Emoji</title>
+    <style>
+        * {
+            font-family: "Segoe UI", Tahoma, Helvetica, sans-serif;
+            ;
+            text-decoration: none
+        }
+        
+        td {
+            white-space: nowrap;
+        }
+        
+        table {
+            border-spacing: 1em 0;
+            display: table;
+            line-height: 20px;
+            margin-bottom: 10px;
+            max-width: 100%;
+        }
+    </style>
+
+    <body>
+        <table></table>
+        <script>
+            var url = "https://raw.githubusercontent.com/github/gemoji/master/db/emoji.json";
+
+            window.onload = function () {
+                ajaxLoad(url, render);
+            }
+
+            function render(data) {
+                var items = JSON.parse(data);
+                var l = items.length;
+                if (l == 0) {
+                    return;
+                }
+                var table = document.getElementsByTagName('table')[0];
+                table.innerHTML = '<thead><tr><th>Emoji</th><th>Code</th><th>Description</th></tr></thead><tbody></tbody>';
+
+                var tbody = document.getElementsByTagName('tbody')[0];
+                for (var i = 0; i < l; i++) {
+                    tbody.appendChild(renderItem(items[i]));
+                }
+
+                function renderItem(item) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = '<td>' + (item.emoji || '') + '</td>'
+                        + '<td>' + item.aliases.map(s => ':' + s).join(' ;') + '</td>'
+                        + '<td>' + (item.description || '') + '</td>';
+                    return tr;
+                }
+            }
+
+            function ajaxLoad(url, success) {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+                        if (xmlhttp.status == 200) {
+                            success(xmlhttp.responseText)
+                        }
+                        else if (xmlhttp.status == 400) {
+                            console.error('There was an error 400');
+                        }
+                        else {
+                            console.error('something else other than 200 was returned');
+                        }
+                    }
+                };
+
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send();
+            }
+        </script>
+</head>
+
+</body>
